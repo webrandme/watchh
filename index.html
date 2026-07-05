@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S T E L L A R | Luxury Redefined</title>
+    <meta name="description" content="Experience the pinnacle of horology. Hand-crafted, precision-engineered, timeless.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;600;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #c5a059;
+            --primary-dim: #8e7340;
+            --bg: #000;
+            --bg-card: #080808;
+            --text: #fff;
+            --text-dim: #777;
+            --border: rgba(255, 255, 255, 0.05);
+            --font-sans: 'Outfit', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Loader --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-content {
+            text-align: center;
+            width: 200px;
+        }
+
+        .loader-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        .loader-logo span { color: var(--primary); }
+
+        .loader-bar-wrap {
+            height: 1px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        #loader-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.1s;
+        }
+
+        #loader-percent {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 90%;
+        }
+
+        section {
+            padding: 160px 0;
+            position: relative;
+        }
+
+        .highlight {
+            color: var(--primary);
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 25px;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px 0;
+            z-index: 1000;
+            transition: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav.scrolled {
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        /* --- Hero & Canvas --- */
+        #hero {
+            height: 800vh;
+            padding: 0;
+        }
+
+        .canvas-container {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: brightness(0.95) contrast(1.05);
+        }
+
+        .hero-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .hero-center {
+            text-align: center;
+        }
+
+        #hero-title {
+            font-size: clamp(3rem, 12vw, 10rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 0.8;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        #hero-subtitle {
+            font-size: 0.8rem;
+            letter-spacing: 7px;
+            color: var(--text-dim);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: var(--text-dim);
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+        }
+
+        .ft-1 { top: 25%; right: 15%; }
+        .ft-2 { bottom: 30%; left: 10%; }
+        .ft-3 { bottom: 20%; right: 20%; }
+
+        /* --- Grid & Content --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        h2 {
+            font-family: var(--font-serif);
+            font-size: 4.5rem;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 40px;
+        }
+
+        .reveal-text p {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 80px 40px;
+            border-radius: 40px;
+            text-align: center;
+        }
+
+        .design-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .design-card {
+            padding: 60px 40px;
+            border-radius: 30px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: 0.5s;
+        }
+
+        .design-card:hover {
+            transform: translateY(-20px);
+            border-color: var(--primary);
+        }
+
+        .design-card.primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .features-wrapper {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 100px;
+        }
+
+        .specs-box {
+            background: linear-gradient(135deg, #0a0a0a, #000);
+            padding: 100px 5%;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .spec-line {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .cta-card {
+            background: var(--primary);
+            padding: 120px 40px;
+            border-radius: 60px;
+            text-align: center;
+            color: #000;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 20px 40px;
+            background: #000;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 15px;
+            margin: 0 10px;
+        }
+
+        footer { text-align: center; padding: 100px 0; border-top: 1px solid var(--border); }
+        
+        @media (max-width: 768px) {
+            .grid-2, .design-row, .features-wrapper { grid-template-columns: 1fr; }
+            #hero-title { font-size: 3.5rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">STELLAR<span>.</span></div>
+            <div class="loader-bar-wrap">
+                <div id="loader-bar"></div>
+            </div>
+            <div id="loader-percent">0%</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">STELLAR<span>.</span></a>
+            <ul class="nav-links">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">Story</a></li>
+                <li><a href="#design">Craft</a></li>
+                <li><a href="#features">Tech</a></li>
+                <li><a href="#specs">Details</a></li>
+                <li><a href="#order">Reserve</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="canvas-container">
+            <canvas id="watch-canvas"></canvas>
+            <div class="hero-content">
+                <div class="hero-center">
+                    <h1 id="hero-title">PRECISION</h1>
+                    <p id="hero-subtitle">THE NEW STANDARD OF LUXURY</p>
+                </div>
+                <div class="floating-text ft-1">AEROSPACE GRADE TITANIUM</div>
+                <div class="floating-text ft-2">TOURBILLON MOVEMENT</div>
+                <div class="floating-text ft-3">HAND-FINISHED TEXTURE</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="grid-2">
+                <div class="reveal-text">
+                    <span class="tag">EST. 1924</span>
+                    <h2>A LEGACY IN <span class="highlight">MOTION</span>.</h2>
+                    <p>Each movement is assembled by a single master watchmaker, a process that takes weeks of concentrated effort.</p>
+                </div>
+                <div class="glass-card">
+                    <i class="fa-solid fa-microchip" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3>ULTRA-THIN</h3>
+                    <p>Only 2.4mm thick, pushing the limits.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design Section -->
+    <section id="design">
+        <div class="container">
+            <div class="design-row">
+                <div class="design-card">
+                    <h4>Sapphire Clarity</h4>
+                    <p>Dual-curve sapphire crystal with 7-layer anti-reflective coating.</p>
+                </div>
+                <div class="design-card primary">
+                    <h4>Geometric Harmony</h4>
+                    <p>Mathematically optimized for ergonomic comfort and visual impact.</p>
+                </div>
+                <div class="design-card">
+                    <h4>Weightless Strength</h4>
+                    <p>Award-winning Grade 5 Titanium alloy construction.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <div class="features-wrapper">
+                <div class="feature-item"><h3>100M WATER RESIST</h3><p>Tested in the toughest conditions.</p></div>
+                <div class="feature-item"><h3>72H POWER RESERVE</h3><p>Never skip a beat throughout the weekend.</p></div>
+                <div class="feature-item"><h3>SUPER-LUMINOVA</h3><p>Unmatched visibility in every environment.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specs Section -->
+    <section id="specs">
+        <div class="container">
+            <div class="specs-box">
+                <h2>SPECIFICATIONS</h2>
+                <div class="specs-grid">
+                    <div class="spec-line"><span class="label">MOVEMENT</span><span class="val">STELLAR CALIBRE S-1</span></div>
+                    <div class="spec-line"><span class="label">CASE</span><span class="val">GRADE 5 TITANIUM</span></div>
+                    <div class="spec-line"><span class="label">CRYSTAL</span><span class="val">AR-COATED SAPPHIRE</span></div>
+                    <div class="spec-line"><span class="label">DIAMETER</span><span class="val">42MM PROFILE</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="order">
+        <div class="container">
+            <div class="cta-card">
+                <h2 style="font-size: 4rem;">RESERVE YOURS.</h2>
+                <p>Limited allocation of 500 numbered pieces worldwide.</p>
+                <a href="#" class="btn-primary">SECURE NOW</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 STELLAR HOROLOGY LUXURY. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <script>
+        const canvas = document.getElementById("watch-canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const frameCount = 210;
+        const images = [];
+        const watch = { frame: 0 };
+        const currentFrame = index => `watch_images/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        let loadedCount = 0;
+        function preloadImages() {
+            return new Promise((resolve) => {
+                for (let i = 0; i < frameCount; i++) {
+                    const img = new Image();
+                    img.src = currentFrame(i);
+                    img.onload = () => {
+                        loadedCount++;
+                        const percent = Math.floor((loadedCount / frameCount) * 100);
+                        document.getElementById('loader-bar').style.width = percent + '%';
+                        document.getElementById('loader-percent').innerText = percent + '%';
+                        if (loadedCount === frameCount) resolve();
+                    };
+                    img.onerror = () => {
+                        loadedCount++;
+                        if (loadedCount === frameCount) resolve();
+                    };
+                    images.push(img);
+                }
+            });
+        }
+
+        function render() {
+            const img = images[watch.frame];
+            if (!img) return;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const nw = img.width * scale;
+            const nh = img.height * scale;
+            context.drawImage(img, (canvas.width - nw) / 2, (canvas.height - nh) / 2, nw, nh);
+        }
+
+        async function init() {
+            await preloadImages();
+            gsap.to("#loader", { opacity: 0, duration: 1, onComplete: () => { document.getElementById("loader").style.display = "none"; } });
+            render();
+            gsap.registerPlugin(ScrollTrigger);
+            
+            gsap.to(watch, {
+                frame: frameCount - 1,
+                snap: "frame",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#hero",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 0.1,
+                },
+                onUpdate: render
+            });
+
+            const heroTL = gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#hero",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1,
+                }
+            });
+
+            heroTL
+                .to("#hero-title", { opacity: 1, y: 0, duration: 2 }, 0.5)
+                .to("#hero-subtitle", { opacity: 1, y: 0, duration: 2 }, 0.8)
+                .to(".ft-1", { opacity: 1, duration: 1 }, 2)
+                .to(".ft-1", { opacity: 0, duration: 1 }, 4)
+                .to(".ft-2", { opacity: 1, duration: 1 }, 5)
+                .to(".ft-2", { opacity: 0, duration: 1 }, 7)
+                .to(".ft-3", { opacity: 1, duration: 1 }, 8)
+                .to(".ft-3", { opacity: 0, duration: 1 }, 10)
+                .to(".hero-center", { opacity: 0, scale: 0.8, duration: 5 }, 12);
+        }
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            render();
+        });
+
+        init();
+    </script>
+</body>
+</html>
